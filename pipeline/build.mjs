@@ -17,6 +17,12 @@ import { matchShape, extendToStops } from './lib/hmm.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
+// The one ALL-CAPS name in an otherwise properly-cased feed, by exact match
+// (CAS and CAS II are the health-insurance house — real initialisms, left).
+const NAME_FIX = {
+  'PASAJ DACIA IIA': 'Pasaj Dacia IIA',
+};
+
 // No second label line here: Romanian is written in the Latin alphabet, so a
 // street name needs no transliteration and no name:*-Latn lookup — unlike the
 // Greek, Bulgarian and Serbian siblings. Stop names arrive properly cased and
@@ -431,6 +437,7 @@ async function processMode(cfg) {
       // OTL publishes its stop names properly cased and accented, so
       // titleCase stays off and no case dictionary runs here.
       if (feed.titleCase) name = titleCase(name);
+      name = NAME_FIX[name] || name;
       const fix = STOP_FIX[feed.tag + ':' + s.stop_id];
       stopsById.set(feed.tag + ':' + s.stop_id, {
         name,
